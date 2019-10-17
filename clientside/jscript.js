@@ -4,12 +4,26 @@ let ctx = canvas.getContext('2d');
 
 let character = {
   img: null,
+  xVel: 0,
+  yVel: 0,
   x: 0,
-  y: 0,
-  width: 32,
-  height: 32,
+  y: 80,
   currentFrame: 0,
-  totalFrames: 4
+  totalFrames: 4,
+  walkingRight: [42,74],
+  walkingLeft: [106,138],
+  standingStill: [10,10],
+
+  walkingVel: function(e){
+    if(e.key === "ArrowRight"){
+      this.x += 10;
+      animate(this.walkingRight);
+    }
+    if(e.key === "ArrowLeft"){
+      this.x -= 10;
+      animate(this.walkingLeft);
+    }
+  }
 }
 
 character.timer = null;
@@ -18,14 +32,20 @@ character.img = new Image();
 character.img.src = './sprites.png'
 
 
-function animate(){
+function animate(frame){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //ctx.drawImage(character.img, character.currentframe * character.width, 0, character.width, character.height, 0, 0, character.width, character.height);
-  ctx.drawImage(character.img, 10 + (character.width * character.currentFrame), 0, 15, 35, 70, 70, 70, 70);
-  character.currentFrame++;
-  if(character.currentFrame > character.totalFrames){
-    character.currentFrame = 0;
+  ctx.drawImage(character.img, frame[character.currentFrame] , 0, 25, 35, character.x, character.y, 70, 70);
+  if(character.currentFrame < 1){
+      character.currentFrame++;
+  } else {
+      character.currentFrame = 0;
   }
 }
 
-setInterval(animate, 390)
+document.addEventListener('keydown', (e) => {
+  character.walkingVel(e)
+})
+
+document.addEventListener('keyup', (e) => {
+  animate(character.standingStill)
+})
